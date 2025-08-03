@@ -1,0 +1,25 @@
+[project]
+name = "maineventmogul"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Samu",email = "smiras2001@rocketmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "rich (>=14.1.0,<15.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.4.1"
+pytest-cov = "^6.2.1"
+black = "^25.1.0"
+isort = "^6.0.1"
+pre-commit = "^4.2.0"
+
