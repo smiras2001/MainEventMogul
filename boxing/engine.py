@@ -1,9 +1,10 @@
 from __future__ import annotations
+
 import random
 from typing import List
 
-from .models import Boxer
 from . import prob
+from .models import Boxer
 
 ROUNDS = 12
 PUNCHES = ("jab", "straight", "lead_hook", "hook", "lead_uppercut", "uppercut")
@@ -59,7 +60,10 @@ class MatchEngine:
 
         return landed
 
-
     def _winner(self) -> str | None:
         r, b = self.red.name, self.blue.name
-        return r if self.scores[r] > self.scores[b] else b if self.scores[b] > self.scores[r] else None
+        return (
+            r
+            if self.scores[r] > self.scores[b]
+            else b if self.scores[b] > self.scores[r] else None
+        )

@@ -3,10 +3,17 @@ from dataclasses import dataclass, field
 SKILL_MIN, SKILL_MAX = 1, 20
 SKILL_NAMES = (
     # fundamentals
-    "jab", "straight", "lead_hook", "hook", "lead_uppercut", "uppercut",
-    "block", "accuracy",
+    "jab",
+    "straight",
+    "lead_hook",
+    "hook",
+    "lead_uppercut",
+    "uppercut",
+    "block",
+    "accuracy",
     # athleticism
-    "power", "reflexes",
+    "power",
+    "reflexes",
 )
 
 
@@ -34,4 +41,6 @@ class Boxer:
             if not SKILL_MIN <= getattr(self, k) <= SKILL_MAX
         }
         if bad:
-            raise ValueError(f"Ratings must be {SKILL_MIN}-{SKILL_MAX}. Offending: {bad}")
+            raise ValueError(
+                f"Ratings must be {SKILL_MIN}-{SKILL_MAX}. Offending: {bad}"
+            )
