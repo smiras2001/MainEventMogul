@@ -27,23 +27,38 @@ class MatchEngine:
 
     # helpers -----------------------------------------------------------
     def _simulate_round(self, rnd: int) -> None:
-        for punch in self.rng.sample(PUNCHES, k=2):  # each fighter throws one random punch
-            self._throw(self.red, self.blue, punch, rnd)
-            self._throw(self.blue, self.red, punch, rnd)
-        # temporary even scoring
-        self.scores[self.red.name] += 10
-        self.scores[self.blue.name] += 10
+        red_landed = blue_landed = 0
 
-    def _throw(self, attacker: Boxer, defender: Boxer, punch: str, rnd: int):
+        # each fighter throws two punches (example logic)
+        for punch in self.rng.sample(PUNCHES, k=2):
+            if self._throw(self.red, self.blue, punch, rnd):
+                red_landed += 1
+            if self._throw(self.blue, self.red, punch, rnd):
+                blue_landed += 1
+        # -------- 10-Point Must placeholder ---------
+        if red_landed > blue_landed:
+            self.scores[self.red.name] += 10
+            self.scores[self.blue.name] += 9
+        elif blue_landed > red_landed:
+            self.scores[self.blue.name] += 10
+            self.scores[self.red.name] += 9
+        else:  # tie on landed punches
+            self.scores[self.red.name] += 10
+            self.scores[self.blue.name] += 10
+
+    def _throw(self, attacker: Boxer, defender: Boxer, punch: str, rnd: int) -> bool:
         landed = prob.hit(
             attacker.accuracy,
             defender.block,
             defender.reflexes,
-            self.rng,  # ← use local RNG
+            self.rng,
         )
         verb = "lands" if landed else "is blocked"
         subj = attacker.name if landed else defender.name
         self.events.append(f"Round {rnd}: {subj} {verb} a {punch.replace('_', ' ')}.")
+
+        return landed
+
 
     def _winner(self) -> str | None:
         r, b = self.red.name, self.blue.name

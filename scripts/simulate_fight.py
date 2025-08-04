@@ -2,15 +2,21 @@ from boxing.engine import MatchEngine
 from boxing.models import Boxer
 
 red = Boxer(
-    "Red", 14, 13, 12, 11, 10, 9,
-    block=12, accuracy=14,
-    power=15, reflexes=11
+    "Red",
+    jab = 14,straight= 13,
+    lead_hook = 12, hook = 11,
+    lead_uppercut = 10, uppercut= 9,
+    block = 12, accuracy = 14,
+    power = 15, reflexes = 11
 )
 
 blue = Boxer(
-    "Blue", 13, 14, 10, 12, 9, 11,
-    block=11, accuracy=13,
-    power=14, reflexes=12
+    "Blue",
+    jab = 10,straight= 19,
+    lead_hook = 14, hook = 13,
+    lead_uppercut = 11, uppercut= 13,
+    block = 9, accuracy = 14,
+    power = 15, reflexes = 11
 )
 
 fight = MatchEngine(red, blue, seed=42).simulate()
