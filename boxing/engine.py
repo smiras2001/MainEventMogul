@@ -50,7 +50,7 @@ class MatchEngine:
     def _throw(self, attacker: Boxer, defender: Boxer, punch: str, rnd: int) -> bool:
         landed = prob.hit(
             attacker.accuracy,
-            defender.block,
+            defender.blocking,
             defender.reflexes,
             self.rng,
         )
