@@ -1,18 +1,19 @@
-import random
+from boxing.models import Boxer
+from boxing.prob import block_score, dodge_score, parry_score
 
-import pytest
+def make_boxer(base: int) -> Boxer:
+    return Boxer(
+        jab=base, straight=base, lead_hook=base, hook=base,
+        lead_uppercut=base, uppercut=base, blocking=base, accuracy=base,
+        anticipation=base, composure=base, positioning=base, decision=base,
+        aggression=base, focus=base, workrate=base, planning=base,
+        power=base, hand_speed=base, foot_speed=base,
+        reflexes=base, stamina=base, agility=base,
+        name="X",
+    )
 
-from boxing.prob import hit
-
-
-def test_equal_skills_about_half():
-    rng = random.Random(0)
-    hits = sum(hit(10, 10, 10, rng=rng) for _ in range(1000))
-    assert 450 < hits < 550
-
-
-def test_extremes():
-    always = sum(hit(20, 1, 1, rng=random.Random(0)) for _ in range(500))
-    never = sum(hit(1, 20, 20, rng=random.Random(0)) for _ in range(500))
-    assert always >= 470  # ~94 % of 500
-    assert never <= 30
+def test_defence_scores_monotonic():
+    low, mid, high = make_boxer(5), make_boxer(10), make_boxer(15)
+    assert block_score(low)  < block_score(mid)  < block_score(high)
+    assert dodge_score(low)  < dodge_score(mid)  < dodge_score(high)
+    assert parry_score(low)  < parry_score(mid)  < parry_score(high)

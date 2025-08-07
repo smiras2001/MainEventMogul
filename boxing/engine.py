@@ -4,6 +4,7 @@ import random
 from typing import List
 
 from . import prob
+from boxing.prob import block_score, dodge_score, parry_score
 from .models import Boxer
 
 ROUNDS = 12
@@ -47,16 +48,53 @@ class MatchEngine:
             self.scores[self.red.name] += 10
             self.scores[self.blue.name] += 10
 
+
     def _throw(self, attacker: Boxer, defender: Boxer, punch: str, rnd: int) -> bool:
-        landed = prob.hit(
-            attacker.accuracy,
-            defender.blocking,
-            defender.reflexes,
-            self.rng,
+        # 1) punch accuracy (0-1)
+        punch_acc = (
+            (getattr(attacker, punch) / 20) + (attacker.accuracy / 20)
+        ) / 2
+
+        # 2) defender’s three defence scores
+        block  = block_score(defender)
+        dodge  = dodge_score(defender)
+        parry  = parry_score(defender)
+
+        # 3) Decision rule
+        p_focus = defender.decision / 20
+        if self.rng.random() < p_focus:
+            chosen = max(block, dodge, parry)
+        else:
+            total = block + dodge + parry
+            roll  = self.rng.random()
+            cutoff_block = block / total
+            cutoff_dodge = cutoff_block + dodge / total
+            if roll < cutoff_block:
+                chosen = block
+            elif roll < cutoff_dodge:
+                chosen = dodge
+            else:
+                chosen = parry
+
+        # 4) land probability
+        p_land = punch_acc / (punch_acc + chosen)
+        landed = self.rng.random() < p_land
+
+        # 5) narrative
+        if landed:
+            verb = "lands"
+            subj = attacker.name
+        else:
+            # choose wording based on which defence actually stopped the punch
+            if chosen == block:
+                verb = "blocked"
+            else:  # chosen was dodge or parry
+                verb = "misses"
+            subj = attacker.name  # attacker is the one whose punch failed
+
+        self.events.append(
+            f"Round {rnd}: {subj} {verb} a {punch.replace('_', ' ')}."
         )
-        verb = "lands" if landed else "is blocked"
-        subj = attacker.name if landed else defender.name
-        self.events.append(f"Round {rnd}: {subj} {verb} a {punch.replace('_', ' ')}.")
 
         return landed
 
